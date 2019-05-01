@@ -3,7 +3,9 @@ import os
 from enemies.scorpion import Scorpion
 from enemies.club import Club
 from enemies.wizard import Wizard
-from towers.archerTower import ArcherTowerLong
+from towers.archerTower import ArcherTowerLong, ArcherTowerShort
+import time
+import random
 
 
 class Game:
@@ -12,17 +14,20 @@ class Game:
         self.height = 700
         self.win = pygame.display.set_mode((self.width, self.height))
         self.enemys = [Club()]
-        self.towers = [ArcherTowerLong(300,200)]
+        self.towers = [ArcherTowerLong(300,200), ArcherTowerLong(700,600), ArcherTowerShort(200,600)]
         self.lives = 10
         self.money = 100
         self.bg = pygame.image.load(os.path.join("game_assets", "bg.png"))
         self.bg = pygame.transform.scale(self.bg, (self.width, self.height))
+        self.timer = time.time()
 
     def run(self):
         run = True
         clock = pygame.time.Clock()
         while run:
-            #pygame.time.delay(500)
+            if time.time() - self.timer >= random.randrange(1,5)/2:
+                self.timer = time.time()
+                self.enemys.append(random.choice([Club(), Scorpion(), Wizard()]))
             clock.tick(200)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -54,14 +59,13 @@ class Game:
     def draw(self):
         self.win.blit(self.bg, (0,0))
 
-        # draw enemies
-        for en in self.enemys:
-            en.draw(self.win)
-
         # draw towers
         for tw in self.towers:
             tw.draw(self.win)
 
+        # draw enemies
+        for en in self.enemys:
+            en.draw(self.win)
 
         pygame.display.update()
 
